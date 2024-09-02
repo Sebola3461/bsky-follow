@@ -69,6 +69,9 @@ class FollowersBot {
 					}
 				}
 
+				this.latestFollowersCount =
+					(myProfile.data.followersCount || 0) + toFollow.length;
+
 				this.logger.printSuccess("Recursive job done!");
 			}
 		} catch (e) {
