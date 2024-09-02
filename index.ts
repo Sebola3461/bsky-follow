@@ -7,7 +7,6 @@ const bsky = new AtpAgent({
 });
 
 class FollowersBot {
-	private static latestFollowersCount = 0;
 	private static readonly logger = new LoggerUtils("Client");
 
 	private static async login() {
@@ -32,48 +31,40 @@ class FollowersBot {
 			if (!myProfile.data.followersCount)
 				return this.logger.printWarning("No followers output!");
 
-			if (this.latestFollowersCount < myProfile.data.followersCount) {
-				this.logger.printInfo(`new follower found!`);
-				this.logger.printInfo("Fetching followers list...");
+			this.logger.printInfo("Fetching followers list...");
 
-				const followersList = await bsky.getFollowers({
-					actor: config.username,
-					limit: 100,
-				});
+			const followersList = await bsky.getFollowers({
+				actor: config.username,
+				limit: 100,
+			});
 
-				const toFollow = followersList.data.followers.filter(
-					(follower) => !follower.viewer?.following
-				);
+			const toFollow = followersList.data.followers.filter(
+				(follower) => !follower.viewer?.following
+			);
 
-				if (toFollow.length < 1)
-					return this.logger.printWarning("You follow everyone!");
+			if (toFollow.length < 1)
+				return this.logger.printSuccess("There's no one to follow");
 
-				for (const follower of toFollow) {
-					try {
-						this.logger.printInfo(
-							`Following ${follower.handle}...`
-						);
+			for (const follower of toFollow) {
+				try {
+					this.logger.printInfo(`Following ${follower.handle}...`);
 
-						await bsky.follow(follower.did);
+					await bsky.follow(follower.did);
 
-						this.logger.printSuccess(
-							`You're now following ${follower.handle}!`
-						);
+					this.logger.printSuccess(
+						`You're now following ${follower.handle}!`
+					);
 
-						await this.sleep(500);
-					} catch (e) {
-						this.logger.printError(
-							`Cannot follow ${follower.handle}`,
-							e
-						);
-					}
+					await this.sleep(500);
+				} catch (e) {
+					this.logger.printError(
+						`Cannot follow ${follower.handle}`,
+						e
+					);
 				}
-
-				this.latestFollowersCount =
-					(myProfile.data.followersCount || 0) + toFollow.length;
-
-				this.logger.printSuccess("Recursive job done!");
 			}
+
+			this.logger.printSuccess("Recursive job done!");
 		} catch (e) {
 			this.logger.printError("Error during fetch followers:", e);
 		}
