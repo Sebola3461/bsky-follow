@@ -59,6 +59,8 @@ class FollowersBot {
 						this.logger.printSuccess(
 							`You're now following ${follower.handle}!`
 						);
+
+						await this.sleep(500);
 					} catch (e) {
 						this.logger.printError(
 							`Cannot follow ${follower.handle}`,
