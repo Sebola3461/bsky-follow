@@ -80,7 +80,7 @@ class FollowersBot {
 
 	private static async runRecursiveJob() {
 		await this.checkFollowers();
-		await this.sleep(5000);
+		await this.sleep(config.sleep_timeout);
 		this.runRecursiveJob();
 	}
 

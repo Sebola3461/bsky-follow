@@ -1,4 +1,5 @@
 {
 	"username": "user.bsky.social or your custom handle",
-	"password": ""
+	"password": "",
+	"sleep_timeout": 60000
 }
